@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About the Developer</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dark-mode.css') }}">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+
+</head>
+<body>
+
+<header>
+  <h1>About the Developer</h1>
+</header>
+
+
+<div class="container about-developer">
+
+  <div class="profile-section">
+    <img src="{{ url_for('static', filename='images/profile.jpg') }}" alt="K N Devanarayanan" class="profile-pic">
+    <h1>K N Devanarayanan</h1>
+    <h2>Student | Developer | Tech Enthusiast</h2>
+  </div>
+
+  <p class="intro">
+    Hi! 👋 I'm <strong>K N Devanarayanan</strong>, the developer of the <em>BCA Resource Hub</em>.  
+    This platform was built to help students like me easily access study materials, previous question papers, syllabus, and stay updated.  
+  </p>
+
+  <table class="info-table">
+    <tr>
+      <td class="label">Current Education:</td>
+      <td>Bachelor of Computer Applications (BCA), [Naipunnya Institue Of Management And Information Technology]</td>
+    </tr>
+    <tr>
+      <td class="label">Gender:</td>
+      <td>Male</td>
+    </tr>
+    <tr>
+      <td class="label">Location:</td>
+      <td>Thrissur, Kerala, India</td>
+    </tr>
+    <tr>
+      <td class="label">Email:</td>
+      <td><a href="mailto:kndevanarayanan@gmail.com">kndevanarayanan@gmail.com.com</a></td>
+    </tr>
+    <tr>
+      <td class="label">Phone:</td>
+      <td>+91-9497736758</td>
+    </tr>
+  </table>
+
+  <div class="social-links">
+    <a href="https://github.com/KN-Devanarayanan" target="_blank">🐱 GitHub</a>
+    <a href="https://www.linkedin.com/in/devanarayanan-k-n/" target="_blank">💼 LinkedIn</a>
+    <a href="https://www.instagram.com/deva_narayanan.2k5/" target="_blank">📷 Instagram</a>
+  </div>
+
+  <div class="report-abuse">
+    <p>If you find any inappropriate or incorrect content on this site, please <a href="mailto:kndevanarayanan@gmail.com?subject=Report%20Abuse">report it here</a>.</p>
+
+    <div class="back-home">
+    <a href="/" class="back-home">Back to Home</a>
+</div>
+
+<script src="{{ url_for('static', filename='js/dark-mode.js') }}"></script>
+
+</body>
+</html>

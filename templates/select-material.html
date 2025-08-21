@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Select Material</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dark-mode.css') }}">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+
+</head>
+<body>
+
+
+<header>
+  <h1>BCA Resource Hub</h1>
+  <p>{{ university }}</p>
+</header>
+
+<div class="container">
+  <h2 class="section-title">Select Material Type</h2>
+  <div class="universities">
+    <a href="/semester/{{ university }}/syllabus" class="uni-card">📘 Syllabus</a>
+    <a href="/semester/{{ university }}/pyq" class="uni-card">📝 Previous Year Questions</a>
+    <a href="/semester/{{ university }}/notes" class="uni-card">📄 Study Materials</a>
+  </div>
+
+  <div class="back-home">
+    <a href="/" class="btn-back">Back to Home</a>
+</div>
+
+</div>
+<script src="{{ url_for('static', filename='js/dark-mode.js') }}"></script>
+
+</body>
+</html>

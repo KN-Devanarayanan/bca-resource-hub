@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Search Results</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dark-mode.css') }}">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+
+</head>
+<body>
+
+<header>
+  <h1>Search Results</h1>
+  <p>Showing results for: <strong>{{ keyword }}</strong></p>
+</header>
+
+
+<div class="container">
+  <h2>Search Results for "{{ keyword }}"</h2>
+
+  {% if grouped_notes %}
+    {% for university, semesters in grouped_notes.items() %}
+      <div class="university-section">
+        <h3>{{ university }}</h3>
+
+        {% for semester, notes in semesters.items() %}
+          <div class="semester-section">
+            <h4>{{ semester }}</h4>
+
+            {% for note in notes %}
+              <div class="note-item">
+                <strong>{{ note.subject }}</strong>
+                <a href="{{ url_for('static', filename='../uploads/' + note.filename) }}" target="_blank">
+                  - Download {{ note.filename }}
+                </a>
+              </div>
+            {% endfor %}
+          </div>
+        {% endfor %}
+      </div>
+    {% endfor %}
+  {% else %}
+    <p>No notes found for "{{ keyword }}".</p>
+  {% endif %}
+</div>
+
+
+
+  <div class="back-home">
+    <a href="/" class="btn-back">Back to Home</a>
+</div>
+
+</div>
+<script src="{{ url_for('static', filename='js/dark-mode.js') }}"></script>
+
+</body>
+</html>

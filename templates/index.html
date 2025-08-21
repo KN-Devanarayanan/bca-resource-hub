@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BCA Resource Hub</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dark-mode.css') }}">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Roboto&display=swap" rel="stylesheet">
+
+
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-container">
+    <div class="logo">BCA Resource Hub</div>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><span class="separator">|</span></li>
+      <li><a href="#contribute-section">Contribute</a></li>
+      <li><span class="separator">|</span></li>
+      <li><a href="#faq">FAQ</a></li>
+      <li><span class="separator">|</span></li>
+      <li><a href="#footer">About</a></li>
+    </ul>
+    <a href="/admin-login" class="admin-btn">Admin Login</a>
+  </div>
+</nav>
+
+
+
+<section class="hero">
+
+  <div class="dark-mode-toggle">
+  <input type="checkbox" id="darkModeToggle" />
+  <label for="darkModeToggle"></label>
+</div>
+
+
+  <div class="hero-content">
+    <h1>BCA Resource Hub</h1>
+    <p>Your One-Stop Portal for Notes, PYQs, and Syllabus</p>
+    <a href="#university-section" class="hero-btn">Explore Now</a>
+  </div>
+</section>
+
+
+
+
+<div class="container">
+  <section class="search-section">
+    <form method="POST" action="/search-results" class="search-form">
+    <input type="text" name="keyword" placeholder="Search by subject" required>
+    <button type="submit">Search 🔍</button>
+</form>
+
+  </section>
+</div>
+
+<div class="container">
+<section id="university-section">
+  <h2 class="section-title">Select Your University</h2> 
+  <div class="universities">
+    <a href="/select-material/University of Calicut" class="uni-card">University of Calicut</a>
+    <a href="/select-material/MG University" class="uni-card">MG University</a>
+    <a href="/select-material/Kerala University" class="uni-card">Kerala University</a>
+  </div>
+</section>
+</div>
+</body>
+
+<div class="container">
+<section>
+  <h2 class="section-title">Latest Announcements</h2>
+  <div>
+    {% for ann in announcements %}
+      <div class="announcement">
+        <strong>{{ ann.headline }}</strong>
+        {{ ann.description }}
+      </div>
+    {% else %}
+      <div class="announcement">
+        <strong>No announcements yet.</strong>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+</div>
+
+<div class="container">
+<section id="contribute-section">
+  <h2 class="section-title">Want to Help?</h2>
+  <p class="contribute-text">
+    We welcome contributions from students and alumni! If you have notes or materials to share, you can help fellow students by submitting them to our hub.
+  </p>
+  <a href="/contribute" class="contribute-card">
+    Contribute Notes
+  </a>
+</section>
+</div>
+
+
+<div class="container">
+<section class="useful-links">
+  <h2 class="section-title">Useful Links</h2>
+  <div class="universities-links">
+    <div class="uni-links-card">
+      <h3>University of Calicut</h3>
+      <ul>
+        <li><a href="https://uoc.ac.in/" target="_blank">Official Website</a></li>
+        <li><a href="https://pareekshabhavan.uoc.ac.in/" target="_blank">Pareeksha Bhavan</a></li>
+        <li><a href="http://cuonline.ac.in/" target="_blank">Online Registration</a></li>
+        <li><a href="https://results.uoc.ac.in/" target="_blank">Results Portal</a></li>
+      </ul>
+    </div>
+
+    <div class="uni-links-card">
+      <h3>MG University</h3>
+      <ul>
+        <li><a href="https://www.mgu.ac.in/" target="_blank">Official Website</a></li>
+        <li><a href="https://exam.mgu.ac.in/" target="_blank">Examination Portal</a></li>
+        <li><a href="https://studreg.mgu.ac.in/" target="_blank">Student Login</a></li>
+        <li><a href="https://collegeadmission.mgu.ac.in/" target="_blank">Results Portal</a></li>
+      </ul>
+    </div>
+
+    <div class="uni-links-card">
+      <h3>Kerala University</h3>
+      <ul>
+        <li><a href="https://www.keralauniversity.ac.in/" target="_blank">Official Website</a></li>
+        <li><a href="https://exams.keralauniversity.ac.in/" target="_blank">Examinations</a></li>
+        <li><a href="https://student.keralauniversity.ac.in/" target="_blank">Online Services</a></li>
+        <li><a href="https://exams.keralauniversity.ac.in/Login/index.php?reslt=1" target="_blank">Results Portal</a></li>
+      </ul>
+    </div>
+  </div>
+</section>
+</div>
+
+
+<div class="container">
+  <section>
+<details id="faq" class="faq-wrapper">
+  <summary class="faq-heading">📖 Frequently Asked Questions</summary>
+  <section class="faq">
+    <details>
+      <summary>What is the BCA Resource Hub?</summary>
+      <p>The BCA Resource Hub is a free online platform where BCA students can access and contribute study notes, previous year question papers, and syllabus materials.</p>
+    </details>
+
+    <details>
+      <summary>Do I need to create an account to download materials?</summary>
+      <p>No, you can browse and download materials freely. Contributing your own notes or managing announcements requires admin access.</p>
+    </details>
+
+    <details>
+      <summary>How can I contribute my own notes?</summary>
+      <p>Click on the “Contribute Notes” button on the homepage and follow the simple upload form to share your resources with others.</p>
+    </details>
+
+    <details>
+      <summary>Are the materials on this site verified?</summary>
+      <p>While we encourage quality contributions, all materials are uploaded by students. Please cross-check important information with official sources when necessary.</p>
+    </details>
+
+    <details>
+      <summary>I can’t find notes for my university/semester. What should I do?</summary>
+      <p>If you don’t find what you’re looking for, try checking again later as more students contribute. Or you can contribute materials yourself to help others!</p>
+    </details>
+
+    <details>
+      <summary>Who maintains this website?</summary>
+      <p>This site is developed and maintained by K N Devanarayanan as a student project for the BCA community.</p>
+    </details>
+
+    <details>
+      <summary>How can I report incorrect or inappropriate content?</summary>
+      <p>Please use the “Contact Developer” link in the footer to report any issues, and we’ll address them promptly.</p>
+    </details>
+  </section>
+</details>
+
+</div>
+</div>
+
+<footer id="footer" style="background:#f1f3f8; padding:1rem; text-align:center; font-size:0.9rem; color:#555;"> 
+  <p>Developed with ❤️ by 
+    <a href="/about-developer" style="color:#4a90e2; text-decoration:none;">K N Devanarayanan</a>
+  </p>
+  <img src="{{ url_for('static', filename='images/profile.jpg') }}" alt="Developer Photo" style="width:80px; border-radius:50%; margin-top:0.5rem;">
+</footer>
+
+
+<script src="{{ url_for('static', filename='js/dark-mode.js') }}"></script>
+
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Select Semester</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dark-mode.css') }}">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+
+</head>
+<body>
+
+
+<header>
+  <h1>BCA Resource Hub</h1>
+  <p>{{ university }} — {{ material_type|capitalize }}</p>
+</header>
+
+<div class="container">
+  <h2 class="section-title">Select Semester</h2>
+  <div class="semesters">
+    {% for sem in semesters %}
+    <a href="/resources/{{ university }}/{{ material_type }}/{{ sem }}" class="uni-card">{{ sem }}</a>
+    {% endfor %}
+  </div>
+
+  <div class="back-home">
+  <a href="/select-material/{{ university }}" class="btn-back">← Back</a>
+  </div>
+</div>
+<script src="{{ url_for('static', filename='js/dark-mode.js') }}"></script>
+
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resources</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dark-mode.css') }}">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+
+
+</head>
+<body>
+
+
+<header>
+  <h1>BCA Resource Hub</h1>
+  <p>{{ university }} — {{ material_type|capitalize }} — {{ semester }}</p>
+  
+</header>
+
+
+<div class="container">
+  <div class="resources">
+    <h2 class="section-title">Available {{ material_type|capitalize }}</h2>
+
+    {% if resources %}
+      <div class="resources-list">
+        {% for res in resources %}
+          <div class="resource-card">
+            <span class="resource-subject">{{ res.subject }}</span>
+            <a href="{{ url_for('download_note', filename=res.filename) }}" class="resource-link">
+              {{ res.filename }}
+            </a>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p>No {{ material_type }} found for {{ university }} — {{ semester }}.</p>
+    {% endif %}
+  </div>
+  
+  <div class="back-home">
+    <a href="/" class="btn-back">Back to Home</a>
+  </div>
+</div>
+
+
+<script src="{{ url_for('static', filename='js/dark-mode.js') }}"></script>
+
+</body>
+</html>
+

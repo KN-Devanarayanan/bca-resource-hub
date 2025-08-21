@@ -1,0 +1,292 @@
+/* ===========================
+   DARK MODE: Base Styles
+=========================== */
+body.dark-mode {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+/* Admin Login button */
+body.dark-mode .admin-btn {
+    background: #27ae60;   /* Darker green for contrast */
+    border: none;
+}
+body.dark-mode .admin-btn,
+body.dark-mode .admin-btn:link,
+body.dark-mode .admin-btn:visited {
+    color: #ffffff !important;  /* Force white text */
+}
+body.dark-mode .admin-btn:hover {
+    background: #2ecc71;   /* Slightly brighter on hover */
+}
+
+/* Navbar & Footer */
+body.dark-mode .navbar,
+body.dark-mode footer {
+    background: linear-gradient(135deg, #1b1b2f, #13131f) !important;
+    color: #e0e0e0;
+    backdrop-filter: none !important;
+}
+
+body.dark-mode .navbar a,
+body.dark-mode footer a {
+    color: #90caf9;
+}
+
+/* ===========================
+   DARK MODE: Hero Section
+=========================== */
+body.dark-mode .hero {
+    background-color: #1a1a1a;
+    color: #f0f0f0;
+}
+body.dark-mode .hero-btn {
+    background-color: #4a90e2;
+}
+
+/* ===========================
+   DARK MODE: Search Section
+=========================== */
+body.dark-mode .search-form {
+    background: #121212;
+    box-shadow: 0 3px 6px #121212;
+}
+body.dark-mode .search-form .search-icon {
+    color: #bbb;
+}
+body.dark-mode .search-form input[type="text"] {
+    background: #333;
+    color: #fff;
+    border: 1px solid #666;
+}
+body.dark-mode .search-form input {
+    color: #fff;
+}
+body.dark-mode .search-form button {
+    background: #4a90e2;
+}
+body.dark-mode .search-form button:hover {
+    background: #3679c4;
+}
+
+/* ===========================
+   DARK MODE: Cards & Sections
+=========================== */
+body.dark-mode .section,
+body.dark-mode .uni-card,
+body.dark-mode .uni-links-card,
+body.dark-mode .announcement {
+    background-color: #1e1e1e;
+    color: #f0f0f0;
+    border: 1px solid #333;
+}
+
+/* Card text overrides */
+body.dark-mode .uni-card strong,
+body.dark-mode .uni-card a {
+    color: #ffffff;
+}
+body.dark-mode .uni-card a:hover {
+    color: #4da3ff;
+}
+
+body.dark-mode .uni-links-card h3 {
+    color: #4FC3F7;
+}
+body.dark-mode .uni-links-card a {
+    color: #ffffff;
+}
+body.dark-mode .uni-links-card a:hover {
+    color: #BBDEFB;
+}
+
+/* Dark mode text for headings */
+body.dark-mode header h1,
+body.dark-mode header p {
+    color: #fff;
+}
+
+/*===================================
+     dark mode for search notes
+===================================*/
+
+body.dark-mode .university-section {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+body.dark-mode .semester-section {
+  background: rgba(255, 255, 255, 0.03);
+  border-left: 3px solid #6dd5fa;  /* lighter blue for dark background */
+}
+
+body.dark-mode .note-item a {
+  color: #6dd5fa;
+}
+
+
+
+/* resources card for available notes */
+
+body.dark-mode .resource-card {
+    background: #1f1f1f;
+    border: 1px solid #444;
+}
+
+body.dark-mode .resource-link {
+    background: #333;
+    color: #6dbbff;
+}
+
+body.dark-mode .resource-link:hover {
+    background: #4a90e2;
+    color: white;
+}
+
+
+/* ===========================
+   DARK MODE: FAQ Section
+=========================== */
+body.dark-mode .faq-wrapper {
+    background-color: #1f1f1f;
+    padding: 1rem;
+    border-radius: 8px;
+}
+body.dark-mode .faq details {
+    background-color: #1e1e1e;
+    color: #f0f0f0;
+    border: 1px solid #333;
+}
+body.dark-mode .faq summary {
+    color: #90caf9;
+}
+body.dark-mode .faq p {
+    color: #ddd;
+}
+
+/* ===========================
+   DARK MODE: About Developer
+=========================== */
+body.dark-mode .about-developer {
+    color: #eee;
+}
+body.dark-mode .about-developer .label {
+    color: #ccc;
+}
+body.dark-mode .about-developer a {
+    color: #6dbbff;
+}
+body.dark-mode .about-developer h1,
+body.dark-mode .about-developer h2,
+body.dark-mode .about-developer p {
+    color: #eee;
+}
+
+/* ===========================
+   DARK MODE: Contribute Section
+=========================== */
+body.dark-mode .contribute-container {
+    background: #1e1e1e;
+    color: white;
+}
+body.dark-mode .guidelines {
+    background: #2b2b2b;
+}
+body.dark-mode .form-section input,
+body.dark-mode .form-section select {
+    background: #333;
+    border: 1px solid #555;
+    color: white;
+}
+body.dark-mode .btn-back {
+    color: #ffffff;
+}
+
+/* Contribute section wrapper */
+body.dark-mode #contribute-section .contribute-text {
+    color: #ddd;
+}
+body.dark-mode .contribute-card {
+    background: #1f1f2e;
+    color: #6dbbff;
+    box-shadow: 0 2px 4px rgba(255,255,255,0.1);
+}
+body.dark-mode .contribute-card:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 4px 8px rgba(255,255,255,0.2);
+    background: #2b2b3d;
+}
+
+/* ===========================
+   DARK MODE: Admin Dashboard
+=========================== */
+body.dark-mode .item-list {
+    background-color: #1a1a1a;
+}
+body.dark-mode .item-list .item {
+    background-color: #1f1f1f;
+    color: #e0e0e0;
+    border-radius: 4px;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+body.dark-mode .item-list .item span,
+body.dark-mode .item-list p {
+    color: #e0e0e0;
+}
+body.dark-mode .item-list h2,
+body.dark-mode .item-list h3,
+body.dark-mode .item-list p,
+body.dark-mode .item-list span,
+body.dark-mode .item-list form {
+    margin-bottom: 1rem;
+}
+
+body.dark-mode .item-list {
+    margin-top: 1rem;
+}
+
+/* Delete button */
+body.dark-mode .delete-btn {
+    background-color: #e74c3c;
+    color: #fff;
+}
+body.dark-mode .delete-btn:hover {
+    background-color: #c0392b;
+}
+
+/* ===========================
+   DARK MODE: Section Spacing & Footer
+=========================== */
+body.dark-mode .container > section,
+body.dark-mode .container > details.faq-wrapper,
+body.dark-mode .container > #faq {
+    border-top: 1px solid #444;
+}
+body.dark-mode footer {
+    background-color: #121212;
+    border-top: 1px solid #333;
+    color: #ccc;
+}
+body.dark-mode footer a {
+    color: #80c0ff;
+}
+
+/* ===========================
+   DARK MODE: Flash Messages
+=========================== */
+body.dark-mode .flash.success {
+    background: #27ae60;
+}
+body.dark-mode .flash.error {
+    background: #c0392b;
+}
+
+/* ===========================
+   DARK MODE: Form Headings
+=========================== */
+body.dark-mode .form-section h2 {
+    color: #fff;
+}
+body.dark-mode .form-section h2 {
+    color: #1a4edd;
+}

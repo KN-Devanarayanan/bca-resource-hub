@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dark-mode.css') }}">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+
+</head>
+<body>
+
+<header>
+  <h1>Admin Dashboard</h1>
+</header>
+
+
+<div class="container">
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul style="color: green;">
+      {% for msg in messages %}
+        <li>{{ msg }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+<div class="section">
+  <h2>Upload Notes</h2>
+  <form method="POST" enctype="multipart/form-data">
+    <label>University</label>
+    <select name="university" required>
+      <option value="">-- Select University --</option>
+      <option>University of Calicut</option>
+      <option>MG University</option>
+      <option>Kerala University</option>
+    </select>
+
+    <label>Semester</label>
+    <select name="semester" required>
+      <option value="">-- Select Semester --</option>
+      <option>Semester 1</option>
+      <option>Semester 2</option>
+      <option>Semester 3</option>
+      <option>Semester 4</option>
+      <option>Semester 5</option>
+      <option>Semester 6</option>
+    </select>
+
+    <label>Subject</label>
+    <input type="text" name="subject" required>
+
+    <label>Upload File</label>
+    <input type="file" name="file" required>
+
+    <button type="submit">Upload Note</button>
+  </form>
+
+  <h3>Uploaded Notes</h3>
+  <div class="item-list">
+    {% for note in notes %}
+    <div class="item">
+      <span>{{ note.university }} - {{ note.semester }} - {{ note.subject }} ({{ note.filename }})</span>
+      <form method="POST" action="{{ url_for('delete_note', id=note.id) }}">
+        <button type="submit" class="delete-btn">Delete</button>
+
+      </form>
+    </div>
+    {% else %}
+    <p>No notes uploaded yet.</p>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="section">
+  <h2>Upload Syllabus</h2>
+  <form method="POST" enctype="multipart/form-data">
+    <input type="hidden" name="resource_type" value="syllabus">
+    <label>University</label>
+    <select name="university" required>
+      <option value="">-- Select University --</option>
+      <option>University of Calicut</option>
+      <option>MG University</option>
+      <option>Kerala University</option>
+    </select>
+
+    <label>Semester</label>
+    <select name="semester" required>
+      <option value="">-- Select Semester --</option>
+      <option>Semester 1</option>
+      <option>Semester 2</option>
+      <option>Semester 3</option>
+      <option>Semester 4</option>
+      <option>Semester 5</option>
+      <option>Semester 6</option>
+    </select>
+
+    <label>Subject</label>
+    <input type="text" name="subject" required>
+
+    <label>Upload File</label>
+    <input type="file" name="file" required>
+
+    <button type="submit">Upload Syllabus</button>
+  </form>
+
+  <h3>Uploaded Syllabus</h3>
+<div class="item-list">
+  {% for s in syllabus %}
+  <div class="item">
+    <span>{{ s.university }} - {{ s.semester }} - {{ s.subject }} ({{ s.filename }})</span>
+    <form method="POST" action="{{ url_for('delete_syllabus', id=s.id) }}">
+      <button type="submit" class="delete-btn">Delete</button>
+
+    </form>
+  </div>
+  {% else %}
+  <p>No syllabus uploaded yet.</p>
+  {% endfor %}
+</div>
+
+
+<div class="section">
+  <h2>Upload PYQ</h2>
+  <form method="POST" enctype="multipart/form-data">
+    <input type="hidden" name="resource_type" value="pyq">
+    <label>University</label>
+    <select name="university" required>
+      <option value="">-- Select University --</option>
+      <option>University of Calicut</option>
+      <option>MG University</option>
+      <option>Kerala University</option>
+    </select>
+
+    <label>Semester</label>
+    <select name="semester" required>
+      <option value="">-- Select Semester --</option>
+      <option>Semester 1</option>
+      <option>Semester 2</option>
+      <option>Semester 3</option>
+      <option>Semester 4</option>
+      <option>Semester 5</option>
+      <option>Semester 6</option>
+    </select>
+
+    <label>Subject</label>
+    <input type="text" name="subject" required>
+
+    <label>Upload File</label>
+    <input type="file" name="file" required>
+
+    <button type="submit">Upload PYQ</button>
+  </form>
+
+  <h3>Uploaded PYQs</h3>
+<div class="item-list">
+  {% for p in pyqs %}
+  <div class="item">
+    <span>{{ p.university }} - {{ p.semester }} - {{ p.subject }} ({{ p.filename }})</span>
+    <form method="POST" action="{{ url_for('delete_pyq', id=p.id) }}">
+      <button type="submit" class="delete-btn">Delete</button>
+
+    </form>
+  </div>
+  {% else %}
+  <p>No PYQs uploaded yet.</p>
+  {% endfor %}
+</div>
+
+
+<div class="section">
+  <h2>Pending Contributed Notes</h2>
+  <div class="item-list">
+    {% if pending_notes %}
+      {% for note in pending_notes %}
+      <div class="item">
+        <span>{{ note.university }} - {{ note.semester }} - {{ note.subject }} ({{ note.filename }})</span>
+        <form method="POST" action="{{ url_for('approve_pending_note', id=note.id) }}" style="display:inline;">
+          <button type="submit" style="background:#2ecc71;">Approve</button>
+        </form>
+        <form method="POST" action="{{ url_for('delete_pending_note', id=note.id) }}" style="display:inline;">
+        <button type="submit" class="delete-btn">Delete</button>
+
+        </form>
+      </div>
+      {% endfor %}
+    {% else %}
+      <p>No pending contributions at the moment.</p>
+    {% endif %}
+  </div>
+</div>
+
+<div class="section">
+  <h2>Post Latest Announcement</h2>
+  <form method="POST">
+    <label>Headline</label>
+    <input type="text" name="headline" required>
+
+    <label>Description</label>
+    <textarea name="description" rows="3" required></textarea>
+
+    <button type="submit">Publish</button>
+  </form>
+
+  <h3>Existing Announcements</h3>
+  <div class="item-list">
+    {% for ann in announcements %}
+    <div class="item">
+      <span>{{ ann.headline }} - {{ ann.description }}</span>
+      <form method="POST" action="{{ url_for('delete_announcement', id=ann.id) }}">
+        <button type="submit" class="delete-btn">Delete</button>
+
+      </form>
+    </div>
+    {% else %}
+    <p>No announcements yet.</p>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="back-home">
+    <a href="/" class="back-home">Back to Home</a>
+</div>
+<script src="{{ url_for('static', filename='js/dark-mode.js') }}"></script>
+
+
+</body>
+</html>
+

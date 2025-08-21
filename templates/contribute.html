@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contribute Notes</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dark-mode.css') }}">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+
+</head>
+<body>
+
+<header>
+  <h1>📤 Contribute Notes</h1>
+</header>
+
+<div class="container contribute-container">
+
+  <!-- Flash Messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-messages">
+        {% for category, msg in messages %}
+          <div class="flash {{ category }}">{{ msg }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <!-- Guidelines -->
+  <div class="guidelines">
+    <h3>Before You Upload:</h3>
+    <ul>
+      <li>Only upload relevant academic notes (PDF/DOC/PPT/JPG allowed).</li>
+      <li>Do not upload copyrighted or inappropriate content.</li>
+      <li>Ensure the file name matches the subject name for easy searching.</li>
+      <li>Admin will review your submission before it is made public.</li>
+    </ul>
+  </div>
+
+  <!-- Form Section -->
+  <div class="form-section">
+    <form method="POST" enctype="multipart/form-data" class="form">
+      <label>University</label>
+      <select name="university" required>
+        <option value="">-- Select University --</option>
+        <option>University of Calicut</option>
+        <option>MG University</option>
+        <option>Kerala University</option>
+      </select>
+
+      <label>Semester</label>
+      <select name="semester" required>
+        <option value="">-- Select Semester --</option>
+        <option>Semester 1</option>
+        <option>Semester 2</option>
+        <option>Semester 3</option>
+        <option>Semester 4</option>
+        <option>Semester 5</option>
+        <option>Semester 6</option>
+      </select>
+
+      <label>Subject</label>
+      <input type="text" name="subject" placeholder="Enter subject name" required>
+
+      <label>Upload File <small>(PDF, DOC, PPT)</small></label>
+      <input type="file" name="file" accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png" required>
+
+      <button type="submit" class="btn-submit">Submit</button>
+    </form>
+
+    <div class="back-home">
+      <a href="/" class="btn-back">← Back to Home</a>
+    </div>
+  </div>
+
+</div>
+
+
+
+<script src="{{ url_for('static', filename='js/dark-mode.js') }}"></script>
+
+</body>
+</html>
