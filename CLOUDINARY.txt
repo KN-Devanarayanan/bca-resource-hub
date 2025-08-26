@@ -1,0 +1,5 @@
+CLOUDINARY
+
+api secret : ETFf6bjw2q80ftHMf08FEZqjCD4
+api key : 951482595188349
+cloud name : ds2d2vofe

@@ -2,6 +2,9 @@ from flask import Flask, render_template, send_from_directory, request, redirect
 import mysql.connector
 import hashlib
 import os
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 
 from dotenv import load_dotenv 
 load_dotenv("keys.env")
@@ -29,7 +32,13 @@ db = mysql.connector.connect(
     database=os.getenv("DB_NAME")
 )
 
+cloudinary.config(
+    secure=True
+)
+
 cursor = db.cursor(dictionary=True)
+
+
 
 
 
