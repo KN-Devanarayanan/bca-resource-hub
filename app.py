@@ -13,6 +13,11 @@ from flask import Flask, render_template
 
 app = Flask(__name__)
 
+
+cloudinary.config(
+    secure=True
+)
+
 app.secret_key = os.getenv("FLASK_SECRET_KEY")
 
 UPLOAD_FOLDER = 'uploads'
@@ -32,9 +37,6 @@ db = mysql.connector.connect(
     database=os.getenv("DB_NAME")
 )
 
-cloudinary.config(
-    secure=True
-)
 
 cursor = db.cursor(dictionary=True)
 
