@@ -458,7 +458,7 @@ def admin_dashboard():
     cursor = db.cursor(dictionary=True)
 
     if request.method == "POST":
-    if 'file' in request.files:
+     if 'file' in request.files:
         resource_type = request.form.get("resource_type", "notes")
         university = request.form["university"]
         semester = request.form["semester"]
