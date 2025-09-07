@@ -127,47 +127,6 @@ def select_semester(university, material_type):
 
 
 
-@app.route("/resources/<university>/<material_type>/<semester>")
-def view_resources(university, material_type, semester):
-    cursor = db.cursor(dictionary=True)
-
-    if material_type == "notes":
-        cursor.execute("""
-            SELECT * FROM notes
-            WHERE university=%s AND semester=%s
-            ORDER BY uploaded_at DESC
-        """, (university, semester))
-        resources = cursor.fetchall()
-
-    elif material_type == "syllabus":
-        cursor.execute("""
-            SELECT * FROM syllabus
-            WHERE university=%s AND semester=%s
-            ORDER BY uploaded_at DESC
-        """, (university, semester))
-        resources = cursor.fetchall()
-
-    elif material_type == "pyq":
-        cursor.execute("""
-            SELECT * FROM pyqs
-            WHERE university=%s AND semester=%s
-            ORDER BY uploaded_at DESC
-        """, (university, semester))
-        resources = cursor.fetchall()
-    
-    else:
-        resources = []
-
-    cursor.close()
-    return render_template(
-        "resources.html",
-        resources=resources,
-        university=university,
-        material_type=material_type,
-        semester=semester
-    )
-
-
 
 
 
@@ -277,9 +236,37 @@ def semester():
 
 
 
+@app.route("/resources/<university>/<material_type>/<semester>")
+def view_resources(university, material_type, semester):
+    valid_tables = {"notes", "syllabus", "pyqs"}
 
-@app.route("/resources", methods=["GET", "POST"])
-def resources():
+    if material_type not in valid_tables:
+        return "Invalid material type", 400
+
+    cursor = db.cursor(dictionary=True)
+    cursor.execute(f"""
+        SELECT id, university, semester, subject, filename FROM {material_type}
+        WHERE university=%s AND semester=%s
+        ORDER BY uploaded_at DESC
+    """, (university, semester))
+
+    resources = cursor.fetchall()
+    cursor.close()
+
+    return render_template(
+        "resources.html",
+        resources=resources,
+        university=university,
+        material_type=material_type,
+        semester=semester
+    )
+
+
+
+
+
+@app.route("/resources/search", methods=["GET", "POST"])
+def search_resources():
     cursor = db.cursor(dictionary=True)
 
     university = None
@@ -292,7 +279,7 @@ def resources():
         university = request.args.get("university")
         semester = request.args.get("semester")
 
-    query = "SELECT * FROM notes WHERE 1=1"
+    query = "SELECT id, university, semester, subject, filename FROM notes WHERE 1=1"
     params = []
 
     if university:
@@ -305,9 +292,16 @@ def resources():
     query += " ORDER BY uploaded_at DESC"
     cursor.execute(query, params)
 
-    notes = cursor.fetchall()
+    resources = cursor.fetchall()
     cursor.close()
-    return render_template("resources.html", notes=notes, university=university, semester=semester)
+
+    return render_template(
+        "resources.html",
+        resources=resources,
+        university=university,
+        material_type="notes",  # Defaults to notes here
+        semester=semester
+    )
 
 
 
@@ -467,8 +461,7 @@ def admin_dashboard():
             upload_result = cloudinary.uploader.upload(
                 file,
                 folder="notes",
-                resource_type="raw",
-                format="pdf"
+                resource_type="raw"
             )
             print(upload_result)  # Optional: Useful for debugging
 
