@@ -468,6 +468,7 @@ def admin_dashboard():
                 file,
                 folder="notes",
                 resource_type="raw"
+                format="pdf"
             )
             print(upload_result)  # Optional: Useful for debugging
 
