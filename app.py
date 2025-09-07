@@ -220,7 +220,6 @@ def upload_note():
 
 
 
-
 @app.route("/uploads/<int:note_id>")
 def download_note(note_id):
     cursor = db.cursor(dictionary=True)
@@ -229,12 +228,8 @@ def download_note(note_id):
     cursor.close()
 
     if result and result["filename"]:
-        file_url = result["filename"]  # This holds the Cloudinary file URL
-
-        # Modify the URL to use raw/upload instead of image/upload
-        file_url = file_url.replace('/image/upload/', '/raw/upload/')
-
-        return redirect(file_url)
+        # Assuming filename now stores full Cloudinary URL
+        return redirect(result["filename"])
     else:
         return "File not found", 404
 
@@ -471,10 +466,13 @@ def admin_dashboard():
 
         # Upload to Cloudinary as raw
         upload_result = cloudinary.uploader.upload(
-            file,
-            folder="notes/",
-            resource_type="raw"
-        )
+    file,
+    folder="notes",
+    resource_type="raw",
+    format="pdf"
+)
+        print(upload_result)
+
 
         if 'secure_url' in upload_result:
             file_url = upload_result["secure_url"]
@@ -488,9 +486,10 @@ def admin_dashboard():
 
             cursor = db.cursor()
             cursor.execute(
-                f"INSERT INTO {table} (university, semester, subject, filename) VALUES (%s, %s, %s, %s)",
-                (university, semester, subject, file_url)
+            f"INSERT INTO {table} (university, semester, subject, filename) VALUES (%s, %s, %s, %s)",
+            (university, semester, subject, upload_result["secure_url"])
             )
+
             db.commit()
             cursor.close()
 

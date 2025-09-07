@@ -32,9 +32,10 @@
             {% for note in notes %}
               <div class="note-item">
                 <strong>{{ note.subject }}</strong>
-               <a href="{{ note.filename }}" target="_blank" download>
-               - Download {{ note.filename.split('/')[-1] }}
-               </a>
+                <a href="{{ url_for('download_note', note_id=res.id) }}" class="resource-link">
+                {{ res.filename }}
+                </a>
+
 
 
 
