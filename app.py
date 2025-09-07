@@ -452,7 +452,6 @@ def about_developer():
 
 
 
-
 @app.route("/admin-dashboard", methods=["GET", "POST"])
 def admin_dashboard():
     cursor = db.cursor(dictionary=True)
@@ -469,10 +468,14 @@ def admin_dashboard():
                 flash("No file selected.")
                 return redirect(url_for("admin_dashboard"))
 
-            filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-            file.save(filepath)
+            # Upload file to Cloudinary
+            result = cloudinary.uploader.upload(
+                file,
+                folder="notes"
+            )
+            file_url = result.get('secure_url')
 
-            # decide which table to insert into
+            # Decide which table to insert into
             table = "notes"
             if resource_type == "syllabus":
                 table = "syllabus"
@@ -481,7 +484,7 @@ def admin_dashboard():
 
             cursor.execute(
                 f"INSERT INTO {table} (university, semester, subject, filename) VALUES (%s, %s, %s, %s)",
-                (university, semester, subject, file.filename)
+                (university, semester, subject, file_url)
             )
             db.commit()
             flash(f"{resource_type.capitalize()} uploaded successfully!")
@@ -517,11 +520,7 @@ def admin_dashboard():
     cursor.execute("SELECT id, university, semester, subject, filename, uploaded_at FROM pending_notes ORDER BY uploaded_at DESC")
     pending_notes = cursor.fetchall()
 
-
-
     cursor.close()
-
-
 
     return render_template(
         "admin-dashboard.html",
