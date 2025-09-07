@@ -187,9 +187,13 @@ def download_note(note_id):
     cursor.close()
 
     if result and result["filename"]:
-        return redirect(result["filename"])  # filename now holds the full URL
+        file_url, original_filename = result["filename"].split("||")
+
+        # Create a redirect URL that forces download with original filename
+        return redirect(f"{file_url}#filename={original_filename}")
     else:
         return "File not found", 404
+
 
 
 
@@ -235,24 +239,23 @@ def semester():
 
 
 
-
 @app.route("/resources/<university>/<material_type>/<semester>")
 def view_resources(university, material_type, semester):
-    valid_tables = {"notes", "syllabus", "pyqs"}
-
-    if material_type not in valid_tables:
-        return "Invalid material type", 400
-
     cursor = db.cursor(dictionary=True)
-    cursor.execute(f"""
-        SELECT id, university, semester, subject, filename FROM {material_type}
-        WHERE university=%s AND semester=%s
-        ORDER BY uploaded_at DESC
-    """, (university, semester))
 
-    resources = cursor.fetchall()
+    resources = []
+    try:
+        if material_type in ["notes", "syllabus", "pyq"]:
+            cursor.execute(f"""
+                SELECT * FROM {material_type}
+                WHERE university=%s AND semester=%s
+                ORDER BY uploaded_at DESC
+            """, (university, semester))
+            resources = cursor.fetchall()
+    except Exception as e:
+        print(f"Database error: {e}")
+
     cursor.close()
-
     return render_template(
         "resources.html",
         resources=resources,
@@ -441,6 +444,7 @@ def about_developer():
 
 
 
+
 @app.route("/admin-dashboard", methods=["GET", "POST"])
 def admin_dashboard():
     cursor = db.cursor(dictionary=True)
@@ -457,18 +461,21 @@ def admin_dashboard():
                 flash("No file selected.")
                 return redirect(url_for("admin_dashboard"))
 
-            # Upload file to Cloudinary as raw
+            # Upload file to Cloudinary as raw WITHOUT forcing format
             upload_result = cloudinary.uploader.upload(
                 file,
                 folder="notes",
                 resource_type="raw"
             )
-            print(upload_result)  # Optional: Useful for debugging
+            print(upload_result)  # For debugging
 
             if 'secure_url' in upload_result:
                 file_url = upload_result["secure_url"]
+                original_filename = file.filename  # Preserve original filename with extension
 
-                # Save file URL into the appropriate table
+                # Save both URL and original filename in DB, joined by '||'
+                combined_filename = file_url + "||" + original_filename
+
                 table = "notes"
                 if resource_type == "syllabus":
                     table = "syllabus"
@@ -477,7 +484,7 @@ def admin_dashboard():
 
                 cursor.execute(
                     f"INSERT INTO {table} (university, semester, subject, filename) VALUES (%s, %s, %s, %s)",
-                    (university, semester, subject, file_url)
+                    (university, semester, subject, combined_filename)
                 )
                 db.commit()
 
@@ -488,7 +495,7 @@ def admin_dashboard():
                 return redirect(url_for("admin_dashboard"))
 
         elif 'headline' in request.form:
-            # Announcement section remains unchanged
+            # Announcement logic remains unchanged
             headline = request.form["headline"]
             description = request.form["description"]
 
@@ -501,7 +508,7 @@ def admin_dashboard():
             flash("Announcement posted successfully!")
             return redirect(url_for("admin_dashboard"))
 
-    # Fetch data for dashboard display (no changes needed)
+    # Fetch data for admin dashboard display
     cursor.execute("SELECT id, headline, description FROM announcements ORDER BY posted_at DESC")
     announcements = cursor.fetchall()
 
@@ -527,6 +534,7 @@ def admin_dashboard():
         pyqs=pyqs,
         pending_notes=pending_notes
     )
+
 
 
 
