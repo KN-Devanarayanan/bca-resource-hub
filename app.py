@@ -7,16 +7,15 @@ import cloudinary.uploader
 import cloudinary.api
 
 from dotenv import load_dotenv 
-load_dotenv("keys.env")
+if os.getenv('RENDER') is None:
+    load_dotenv("keys.env")
 
 from flask import Flask, render_template
 
 app = Flask(__name__)
 
 
-cloudinary.config(
-    secure=True
-)
+
 
 app.secret_key = os.getenv("FLASK_SECRET_KEY")
 
