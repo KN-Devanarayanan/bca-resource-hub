@@ -458,7 +458,7 @@ def admin_dashboard():
     cursor = db.cursor(dictionary=True)
 
     if request.method == "POST":
-     if 'file' in request.files:
+    if 'file' in request.files:
         resource_type = request.form.get("resource_type", "notes")
         university = request.form["university"]
         semester = request.form["semester"]
@@ -469,29 +469,36 @@ def admin_dashboard():
             flash("No file selected.")
             return redirect(url_for("admin_dashboard"))
 
-        # Upload to Cloudinary
+        # Upload to Cloudinary as raw
         upload_result = cloudinary.uploader.upload(
             file,
-            resource_type="raw",
-            folder="notes"
+            folder="notes/",
+            resource_type="raw"
         )
 
-        file_url = upload_result["secure_url"]
+        if 'secure_url' in upload_result:
+            file_url = upload_result["secure_url"]
 
-        # Insert URL into DB
-        table = "notes"
-        if resource_type == "syllabus":
-            table = "syllabus"
-        elif resource_type == "pyq":
-            table = "pyqs"
+            # Save the file_url in your database, not the filename
+            table = "notes"
+            if resource_type == "syllabus":
+                table = "syllabus"
+            elif resource_type == "pyq":
+                table = "pyqs"
 
-        cursor.execute(
-            f"INSERT INTO {table} (university, semester, subject, filename) VALUES (%s, %s, %s, %s)",
-            (university, semester, subject, file_url)
-        )
-        db.commit()
-        flash(f"{resource_type.capitalize()} uploaded successfully!")
-        return redirect(url_for("admin_dashboard"))
+            cursor = db.cursor()
+            cursor.execute(
+                f"INSERT INTO {table} (university, semester, subject, filename) VALUES (%s, %s, %s, %s)",
+                (university, semester, subject, file_url)
+            )
+            db.commit()
+            cursor.close()
+
+            flash(f"{resource_type.capitalize()} uploaded successfully!")
+            return redirect(url_for("admin_dashboard"))
+        else:
+            flash("Failed to upload file to Cloudinary.", "danger")
+            return redirect(url_for("admin_dashboard"))
 
 
 
