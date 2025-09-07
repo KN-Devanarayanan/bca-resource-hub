@@ -221,22 +221,18 @@ def upload_note():
 
 
 
-
-@app.route("/uploads/<filename>")
-def download_note(filename):
-    cursor = db.cursor()
-    cursor.execute("SELECT filename FROM notes WHERE filename LIKE %s", (f"%{filename}%",))
+@app.route("/uploads/<int:note_id>")
+def download_note(note_id):
+    cursor = db.cursor(dictionary=True)
+    cursor.execute("SELECT filename FROM notes WHERE id = %s", (note_id,))
     result = cursor.fetchone()
     cursor.close()
 
-    if result:
-        file_url = result[0]  # This is the Cloudinary secure URL
+    if result and result["filename"]:
+        file_url = result["filename"]  # This holds the Cloudinary file URL
         return redirect(file_url)
     else:
-        flash('File not found in database.', 'danger')
-        return redirect(url_for('admin_dashboard'))
-
-
+        return "File not found", 404
 
 
 

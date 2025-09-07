@@ -30,8 +30,8 @@
         {% for res in resources %}
           <div class="resource-card">
             <span class="resource-subject">{{ res.subject }}</span>
-            <a href="{{ url_for('download_note', filename=res.filename) }}" class="resource-link">
-              {{ res.filename }}
+            <a href="{{ url_for('download_note', note_id=res.id) }}" class="resource-link">
+            {{ res.filename }}
             </a>
           </div>
         {% endfor %}

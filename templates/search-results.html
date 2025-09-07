@@ -32,9 +32,11 @@
             {% for note in notes %}
               <div class="note-item">
                 <strong>{{ note.subject }}</strong>
-                <a href="{{ url_for('static', filename='../uploads/' + note.filename) }}" target="_blank">
-                  - Download {{ note.filename }}
+                <a href="{{ url_for('download_note', note_id=note.id) }}" target="_blank">
+                - Download {{ note.filename }}
                 </a>
+
+
               </div>
             {% endfor %}
           </div>
