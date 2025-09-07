@@ -230,9 +230,14 @@ def download_note(note_id):
 
     if result and result["filename"]:
         file_url = result["filename"]  # This holds the Cloudinary file URL
+
+        # Modify the URL to use raw/upload instead of image/upload
+        file_url = file_url.replace('/image/upload/', '/raw/upload/')
+
         return redirect(file_url)
     else:
         return "File not found", 404
+
 
 
 
