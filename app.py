@@ -467,7 +467,7 @@ def admin_dashboard():
             upload_result = cloudinary.uploader.upload(
                 file,
                 folder="notes",
-                resource_type="raw"
+                resource_type="raw",
                 format="pdf"
             )
             print(upload_result)  # Optional: Useful for debugging
