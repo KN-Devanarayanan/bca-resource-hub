@@ -228,8 +228,7 @@ def download_note(note_id):
     cursor.close()
 
     if result and result["filename"]:
-        # Assuming filename now stores full Cloudinary URL
-        return redirect(result["filename"])
+        return redirect(result["filename"])  # filename now holds the full URL
     else:
         return "File not found", 404
 
@@ -453,55 +452,62 @@ def admin_dashboard():
     cursor = db.cursor(dictionary=True)
 
     if request.method == "POST":
-     if 'file' in request.files:
-        resource_type = request.form.get("resource_type", "notes")
-        university = request.form["university"]
-        semester = request.form["semester"]
-        subject = request.form["subject"]
-        file = request.files["file"]
+        if 'file' in request.files:
+            resource_type = request.form.get("resource_type", "notes")
+            university = request.form["university"]
+            semester = request.form["semester"]
+            subject = request.form["subject"]
+            file = request.files["file"]
 
-        if file.filename == "":
-            flash("No file selected.")
-            return redirect(url_for("admin_dashboard"))
+            if file.filename == "":
+                flash("No file selected.")
+                return redirect(url_for("admin_dashboard"))
 
-        # Upload to Cloudinary as raw
-        upload_result = cloudinary.uploader.upload(
-    file,
-    folder="notes",
-    resource_type="raw",
-    format="pdf"
-)
-        print(upload_result)
-
-
-        if 'secure_url' in upload_result:
-            file_url = upload_result["secure_url"]
-
-            # Save the file_url in your database, not the filename
-            table = "notes"
-            if resource_type == "syllabus":
-                table = "syllabus"
-            elif resource_type == "pyq":
-                table = "pyqs"
-
-            cursor = db.cursor()
-            cursor.execute(
-            f"INSERT INTO {table} (university, semester, subject, filename) VALUES (%s, %s, %s, %s)",
-            (university, semester, subject, upload_result["secure_url"])
+            # Upload file to Cloudinary as raw
+            upload_result = cloudinary.uploader.upload(
+                file,
+                folder="notes",
+                resource_type="raw"
             )
+            print(upload_result)  # Optional: Useful for debugging
 
+            if 'secure_url' in upload_result:
+                file_url = upload_result["secure_url"]
+
+                # Save file URL into the appropriate table
+                table = "notes"
+                if resource_type == "syllabus":
+                    table = "syllabus"
+                elif resource_type == "pyq":
+                    table = "pyqs"
+
+                cursor.execute(
+                    f"INSERT INTO {table} (university, semester, subject, filename) VALUES (%s, %s, %s, %s)",
+                    (university, semester, subject, file_url)
+                )
+                db.commit()
+
+                flash(f"{resource_type.capitalize()} uploaded successfully!")
+                return redirect(url_for("admin_dashboard"))
+            else:
+                flash("Failed to upload file to Cloudinary.", "danger")
+                return redirect(url_for("admin_dashboard"))
+
+        elif 'headline' in request.form:
+            # Announcement section remains unchanged
+            headline = request.form["headline"]
+            description = request.form["description"]
+
+            cursor.execute(
+                "INSERT INTO announcements (headline, description) VALUES (%s, %s)",
+                (headline, description)
+            )
             db.commit()
-            cursor.close()
 
-            flash(f"{resource_type.capitalize()} uploaded successfully!")
-            return redirect(url_for("admin_dashboard"))
-        else:
-            flash("Failed to upload file to Cloudinary.", "danger")
+            flash("Announcement posted successfully!")
             return redirect(url_for("admin_dashboard"))
 
-
-
-    # 📝 Fetch existing data
+    # Fetch data for dashboard display (no changes needed)
     cursor.execute("SELECT id, headline, description FROM announcements ORDER BY posted_at DESC")
     announcements = cursor.fetchall()
 
@@ -514,7 +520,6 @@ def admin_dashboard():
     cursor.execute("SELECT id, university, semester, subject, filename FROM pyqs ORDER BY uploaded_at DESC")
     pyqs = cursor.fetchall()
 
-    # 📝 Fetch pending contributed notes
     cursor.execute("SELECT id, university, semester, subject, filename, uploaded_at FROM pending_notes ORDER BY uploaded_at DESC")
     pending_notes = cursor.fetchall()
 
@@ -528,6 +533,7 @@ def admin_dashboard():
         pyqs=pyqs,
         pending_notes=pending_notes
     )
+
 
 
 
