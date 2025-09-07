@@ -16,13 +16,3 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-// Hide flash messages after 4 seconds
-setTimeout(function () {
-  // Find all elements with class "flash"
-  var messages = document.querySelectorAll('.flash');
-
-  // Loop through each message
-  messages.forEach(function (msg) {
-    msg.style.display = 'none'; // Simply hide it
-  });
-}, 4000);

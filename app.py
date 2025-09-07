@@ -178,29 +178,61 @@ def upload_note():
         flash('Please login as admin.', 'danger')
         return redirect(url_for('admin_login'))
 
-    university = request.form['university']
-    semester = request.form['semester']
-    subject = request.form['subject']
-    file = request.files['file']
+    try:
+        university = request.form['university']
+        semester = request.form['semester']
+        subject = request.form['subject']
+        file = request.files['file']
 
-    if file:
-        filename = file.filename  # use the raw filename
-        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        file.save(filepath)
+        if file:
+            print(f"File received: {file.filename}")
 
-        cursor = db.cursor()
-        cursor.execute("""
-            INSERT INTO notes (university, semester, subject, filename) 
-            VALUES (%s, %s, %s, %s)
-        """, (university, semester, subject, filename))
-        db.commit()
-        cursor.close()
+            # Upload to Cloudinary
+            result = cloudinary.uploader.upload(file, resource_type="auto")
+            print(f"Cloudinary upload result: {result}")
 
-        flash('Note uploaded successfully!', 'success')
-    else:
-        flash('No file uploaded.', 'danger')
+            file_url = result['secure_url']
+            print(f"Cloudinary file URL: {file_url}")
+
+            # Save file URL in DB
+            cursor = db.cursor()
+            cursor.execute("""
+                INSERT INTO notes (university, semester, subject, filename) 
+                VALUES (%s, %s, %s, %s)
+            """, (university, semester, subject, file_url))
+            db.commit()
+            cursor.close()
+
+            flash('Note uploaded successfully!', 'success')
+        else:
+            flash('No file uploaded.', 'danger')
+
+    except Exception as e:
+        print(f"Upload Note Error: {str(e)}")
+        flash('An error occurred during file upload.', 'danger')
 
     return redirect(url_for('admin_dashboard'))
+
+
+
+
+
+
+@app.route("/uploads/<filename>")
+def download_note(filename):
+    cursor = db.cursor()
+    cursor.execute("SELECT filename FROM notes WHERE filename LIKE %s", (f"%{filename}%",))
+    result = cursor.fetchone()
+    cursor.close()
+
+    if result:
+        file_url = result[0]  # This is the Cloudinary secure URL
+        return redirect(file_url)
+    else:
+        flash('File not found in database.', 'danger')
+        return redirect(url_for('admin_dashboard'))
+
+
 
 
 
@@ -280,12 +312,6 @@ def resources():
 
 
 
-
-
-
-@app.route("/uploads/<filename>")
-def download_note(filename):
-    return send_from_directory("uploads", filename)
 
 
 
