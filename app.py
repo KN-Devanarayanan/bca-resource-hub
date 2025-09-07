@@ -453,51 +453,42 @@ def admin_dashboard():
     cursor = db.cursor(dictionary=True)
 
     if request.method == "POST":
-        if 'file' in request.files:
-            resource_type = request.form.get("resource_type", "notes")
-            university = request.form["university"]
-            semester = request.form["semester"]
-            subject = request.form["subject"]
-            file = request.files["file"]
+     if 'file' in request.files:
+        resource_type = request.form.get("resource_type", "notes")
+        university = request.form["university"]
+        semester = request.form["semester"]
+        subject = request.form["subject"]
+        file = request.files["file"]
 
-            if file.filename == "":
-                flash("No file selected.")
-                return redirect(url_for("admin_dashboard"))
-
-            # Upload file to Cloudinary
-            result = cloudinary.uploader.upload(
-                file,
-                folder="notes"
-            )
-            file_url = result.get('secure_url')
-
-            # Decide which table to insert into
-            table = "notes"
-            if resource_type == "syllabus":
-                table = "syllabus"
-            elif resource_type == "pyq":
-                table = "pyqs"
-
-            cursor.execute(
-                f"INSERT INTO {table} (university, semester, subject, filename) VALUES (%s, %s, %s, %s)",
-                (university, semester, subject, file_url)
-            )
-            db.commit()
-            flash(f"{resource_type.capitalize()} uploaded successfully!")
+        if file.filename == "":
+            flash("No file selected.")
             return redirect(url_for("admin_dashboard"))
 
-        elif 'headline' in request.form:
-            # 📰 Announcement Form
-            headline = request.form["headline"]
-            description = request.form["description"]
+        # Upload to Cloudinary
+        upload_result = cloudinary.uploader.upload(
+            file,
+            resource_type="raw",
+            folder="notes"
+        )
 
-            cursor.execute(
-                "INSERT INTO announcements (headline, description) VALUES (%s, %s)",
-                (headline, description)
-            )
-            db.commit()
-            flash("Announcement posted successfully!")
-            return redirect(url_for("admin_dashboard"))
+        file_url = upload_result["secure_url"]
+
+        # Insert URL into DB
+        table = "notes"
+        if resource_type == "syllabus":
+            table = "syllabus"
+        elif resource_type == "pyq":
+            table = "pyqs"
+
+        cursor.execute(
+            f"INSERT INTO {table} (university, semester, subject, filename) VALUES (%s, %s, %s, %s)",
+            (university, semester, subject, file_url)
+        )
+        db.commit()
+        flash(f"{resource_type.capitalize()} uploaded successfully!")
+        return redirect(url_for("admin_dashboard"))
+
+
 
     # 📝 Fetch existing data
     cursor.execute("SELECT id, headline, description FROM announcements ORDER BY posted_at DESC")
