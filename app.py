@@ -173,27 +173,31 @@ def view_resources(university, material_type, semester):
 
 @app.route('/upload-note', methods=['POST'])
 def upload_note():
-    if 'admin' not in session:
-        flash('Please login as admin.', 'danger')
-        return redirect(url_for('admin_login'))
-
     try:
+        if 'admin' not in session:
+            flash('Please login as admin.', 'danger')
+            return redirect(url_for('admin_login'))
+
         university = request.form['university']
         semester = request.form['semester']
         subject = request.form['subject']
         file = request.files['file']
 
+        print(f"DEBUG: Received file - {file.filename if file else 'No file'}")
+
         if file:
-            print(f"File received: {file.filename}")
+            # Upload to Cloudinary directly
+            result = cloudinary.uploader.upload(
+                file,
+                folder="notes"
+            )
+            print(f"DEBUG: Cloudinary upload result - {result}")
 
-            # Upload to Cloudinary
-            result = cloudinary.uploader.upload(file, resource_type="auto")
-            print(f"Cloudinary upload result: {result}")
+            file_url = result.get('secure_url')
+            if not file_url:
+                raise Exception("Cloudinary did not return a file URL")
 
-            file_url = result['secure_url']
-            print(f"Cloudinary file URL: {file_url}")
-
-            # Save file URL in DB
+            # Save only the Cloudinary URL in DB
             cursor = db.cursor()
             cursor.execute("""
                 INSERT INTO notes (university, semester, subject, filename) 
@@ -207,10 +211,11 @@ def upload_note():
             flash('No file uploaded.', 'danger')
 
     except Exception as e:
-        print(f"Upload Note Error: {str(e)}")
-        flash('An error occurred during file upload.', 'danger')
+        print(f"ERROR during file upload: {str(e)}")
+        flash(f"Error uploading note: {str(e)}", 'danger')
 
     return redirect(url_for('admin_dashboard'))
+
 
 
 
