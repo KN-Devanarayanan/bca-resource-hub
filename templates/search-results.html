@@ -33,8 +33,9 @@
               <div class="note-item">
                 <strong>{{ note.subject }}</strong>
                 <a href="{{ url_for('download_note', note_id=note.id) }}" target="_blank">
-              - Download {{ note.filename }}
-              </a>
+                - Download {{ note.original_filename }}
+                </a>
+
 
 
 

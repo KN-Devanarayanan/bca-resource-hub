@@ -31,8 +31,9 @@
           <div class="resource-card">
             <span class="resource-subject">{{ res.subject }}</span>
             <a href="{{ url_for('download_note', note_id=res.id) }}" class="resource-link">
-    {{ res.filename.split('||')[1] }}
-</a>
+            {{ res.original_filename }}
+            </a>
+
 
 
 

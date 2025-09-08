@@ -1,12 +1,15 @@
-from flask import Flask, render_template, send_from_directory, request, redirect, url_for, session, flash
+from flask import Flask, render_template, send_from_directory, Response, request, redirect, url_for, session, flash
 import mysql.connector
 import hashlib
 import os
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
-
+import requests
+from io import BytesIO
 from dotenv import load_dotenv 
+
+
 if os.getenv('RENDER') is None:
     load_dotenv("keys.env")
 
@@ -130,72 +133,45 @@ def select_semester(university, material_type):
 
 
 
-@app.route('/upload-note', methods=['POST'])
-def upload_note():
-    try:
-        if 'admin' not in session:
-            flash('Please login as admin.', 'danger')
-            return redirect(url_for('admin_login'))
-
-        university = request.form['university']
-        semester = request.form['semester']
-        subject = request.form['subject']
-        file = request.files['file']
-
-        print(f"DEBUG: Received file - {file.filename if file else 'No file'}")
-
-        if file:
-            # Upload to Cloudinary directly
-            result = cloudinary.uploader.upload(
-                file,
-                folder="notes"
-            )
-            print(f"DEBUG: Cloudinary upload result - {result}")
-
-            file_url = result.get('secure_url')
-            if not file_url:
-                raise Exception("Cloudinary did not return a file URL")
-
-            # Save only the Cloudinary URL in DB
-            cursor = db.cursor()
-            cursor.execute("""
-                INSERT INTO notes (university, semester, subject, filename) 
-                VALUES (%s, %s, %s, %s)
-            """, (university, semester, subject, file_url))
-            db.commit()
-            cursor.close()
-
-            flash('Note uploaded successfully!', 'success')
-        else:
-            flash('No file uploaded.', 'danger')
-
-    except Exception as e:
-        print(f"ERROR during file upload: {str(e)}")
-        flash(f"Error uploading note: {str(e)}", 'danger')
-
-    return redirect(url_for('admin_dashboard'))
-
-
-
-
 
 @app.route("/uploads/<int:note_id>")
 def download_note(note_id):
     cursor = db.cursor(dictionary=True)
-    cursor.execute("SELECT filename FROM notes WHERE id = %s", (note_id,))
+    cursor.execute("SELECT filename, original_filename FROM notes WHERE id = %s", (note_id,))
     result = cursor.fetchone()
     cursor.close()
 
-    if result and result["filename"]:
-        file_url, original_filename = result["filename"].split("||")
+    if result and result["filename"] and result["original_filename"]:
+        file_url = result["filename"]
+        original_filename = result["original_filename"]
 
-        # Create a redirect URL that forces download with original filename
-        return redirect(f"{file_url}#filename={original_filename}")
+        # Redirect to the force-download route
+        return redirect(url_for('force_download', url=file_url, filename=original_filename))
     else:
         return "File not found", 404
 
 
 
+
+@app.route("/force-download")
+def force_download():
+    file_url = request.args.get('url')
+    filename = request.args.get('filename')
+
+    if not file_url or not filename:
+        return "Invalid parameters", 400
+
+    resp = requests.get(file_url)
+    if resp.status_code != 200:
+        return "File not found on Cloudinary", 404
+
+    return Response(
+        resp.content,
+        headers={
+            'Content-Type': 'application/octet-stream',
+            'Content-Disposition': f'attachment; filename="{filename}"'
+        }
+    )
 
 
 
@@ -457,6 +433,12 @@ def admin_dashboard():
             subject = request.form["subject"]
             file = request.files["file"]
 
+            # Extract the file extension
+            file_extension = os.path.splitext(file.filename)[1]  # e.g., ".jpg" or ".pdf"
+
+            # Generate a custom public_id using the original filename without special chars
+            safe_filename = file.filename.rsplit('.', 1)[0].replace(' ', '_').replace('/', '_')
+
             if file.filename == "":
                 flash("No file selected.")
                 return redirect(url_for("admin_dashboard"))
@@ -465,7 +447,8 @@ def admin_dashboard():
             upload_result = cloudinary.uploader.upload(
                 file,
                 folder="notes",
-                resource_type="raw"
+                resource_type="raw",
+                public_id=safe_filename  # Use safe filename as ID
             )
             print(upload_result)  # For debugging
 
@@ -473,8 +456,7 @@ def admin_dashboard():
                 file_url = upload_result["secure_url"]
                 original_filename = file.filename  # Preserve original filename with extension
 
-                # Save both URL and original filename in DB, joined by '||'
-                combined_filename = file_url + "||" + original_filename
+        
 
                 table = "notes"
                 if resource_type == "syllabus":
@@ -483,9 +465,11 @@ def admin_dashboard():
                     table = "pyqs"
 
                 cursor.execute(
-                    f"INSERT INTO {table} (university, semester, subject, filename) VALUES (%s, %s, %s, %s)",
-                    (university, semester, subject, combined_filename)
+                f"INSERT INTO {table} (university, semester, subject, filename, original_filename) VALUES (%s, %s, %s, %s, %s)",
+                (university, semester, subject, upload_result["secure_url"], file.filename)
                 )
+
+
                 db.commit()
 
                 flash(f"{resource_type.capitalize()} uploaded successfully!")
