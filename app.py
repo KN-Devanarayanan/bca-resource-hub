@@ -399,18 +399,26 @@ def contribute():
 @app.route("/approve-pending-note/<int:id>", methods=["POST"])
 def approve_pending_note(id):
     cursor = db.cursor(dictionary=True)
+
+    # Fetch the pending note
     cursor.execute("SELECT * FROM pending_notes WHERE id=%s", (id,))
     note = cursor.fetchone()
+
     if note:
+        # Insert into notes table, including original_filename
         cursor.execute(
-            "INSERT INTO notes (university, semester, subject, filename) VALUES (%s, %s, %s, %s)",
-            (note["university"], note["semester"], note["subject"], note["filename"])
+            "INSERT INTO notes (university, semester, subject, filename, original_filename) VALUES (%s, %s, %s, %s, %s)",
+            (note["university"], note["semester"], note["subject"], note["filename"], note["original_filename"])
         )
+        # Delete from pending_notes
         cursor.execute("DELETE FROM pending_notes WHERE id=%s", (id,))
+
         db.commit()
+
     cursor.close()
     flash("Note approved and published!", "success")
     return redirect(url_for("admin_dashboard"))
+
 
 
 
