@@ -30,9 +30,10 @@
         {% for res in resources %}
           <div class="resource-card">
             <span class="resource-subject">{{ res.subject }}</span>
-            <a href="{{ url_for('download_note', note_id=res.id) }}" class="resource-link">
+            <a href="{{ url_for('download_file', material_type=material_type, item_id=res.id) }}" class="resource-link">
             {{ res.original_filename }}
             </a>
+
 
 
 

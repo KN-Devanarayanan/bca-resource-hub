@@ -134,18 +134,20 @@ def select_semester(university, material_type):
 
 
 
-@app.route("/uploads/<int:note_id>")
-def download_note(note_id):
+@app.route("/uploads/<material_type>/<int:item_id>")
+def download_file(material_type, item_id):
+    valid_types = ['notes', 'syllabus', 'pyq']
+    if material_type not in valid_types:
+        return "Invalid material type", 400
+
     cursor = db.cursor(dictionary=True)
-    cursor.execute("SELECT filename, original_filename FROM notes WHERE id = %s", (note_id,))
+    cursor.execute(f"SELECT filename, original_filename FROM {material_type} WHERE id = %s", (item_id,))
     result = cursor.fetchone()
     cursor.close()
 
     if result and result["filename"] and result["original_filename"]:
         file_url = result["filename"]
         original_filename = result["original_filename"]
-
-        # Redirect to the force-download route
         return redirect(url_for('force_download', url=file_url, filename=original_filename))
     else:
         return "File not found", 404
