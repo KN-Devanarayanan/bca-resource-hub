@@ -348,35 +348,48 @@ def contribute():
         subject = request.form["subject"]
         file = request.files["file"]
 
-        # If no file selected
         if file.filename == "":
             flash("No file selected.", "error")
             return redirect(url_for("contribute"))
 
         try:
-            # Save the file
-            filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-            file.save(filepath)
+            # Extract original filename
+            original_filename = file.filename
 
-            # Insert into database
+            # Generate a safe public_id
+            safe_filename = original_filename.rsplit('.', 1)[0].replace(' ', '_').replace('/', '_')
+
+            # Upload to Cloudinary as raw, without forcing format
+            upload_result = cloudinary.uploader.upload(
+                file,
+                folder="notes",
+                resource_type="raw",
+                public_id=safe_filename
+            )
+
+            file_url = upload_result.get('secure_url')
+            if not file_url:
+                raise Exception("Cloudinary did not return a file URL")
+
+            # Save into database with both URL and original filename
             cursor = db.cursor()
             cursor.execute(
-                "INSERT INTO pending_notes (university, semester, subject, filename) VALUES (%s, %s, %s, %s)",
-                (university, semester, subject, file.filename)
+                "INSERT INTO pending_notes (university, semester, subject, filename, original_filename) VALUES (%s, %s, %s, %s, %s)",
+                (university, semester, subject, file_url, original_filename)
             )
             db.commit()
             cursor.close()
 
-            # Success message
             flash("Thank you! Your note has been submitted for admin review.", "success")
 
         except Exception as e:
-            print(f"Error: {e}")  # For debugging
+            print(f"Error: {e}")
             flash("There was an error uploading your notes. Please try again.", "error")
 
         return redirect(url_for("contribute"))
 
     return render_template("contribute.html")
+
 
 
 
